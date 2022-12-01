@@ -16,7 +16,10 @@ def setUpDatabase(db_name):
 # TASK 1
 # CREATE TABLE FOR EMPLOYEE INFORMATION IN DATABASE AND ADD INFORMATION
 def create_employee_table(cur, conn):
-    pass
+    cur.execute('create table if not exists employees (employee_id INTEGER PRIMARY KEY, first_name TEXT, last_name TEXT, job_id INTEGER, hire_data DATE, salary NUMBER')
+    conn.commit()
+
+    
 
 # ADD EMPLOYEE'S INFORMTION TO THE TABLE
 
@@ -26,11 +29,24 @@ def add_employee(filename, cur, conn):
     f = open(os.path.abspath(os.path.join(os.path.dirname(__file__), filename)))
     file_data = f.read()
     f.close()
+
     # THE REST IS UP TO YOU
-    pass
+    data = json.loads(file_data)
+    for item in data:
+        emp_id = item['employee_id']
+        first_n= item['first_name']
+        last_n =item['last_name']
+        hire_d = item['hire_data']
+        job = item['job_id']
+        amount = item['salary']
+    cur.execute('insert or ignore into employees(employee_id, first_name, last_name, Hire_data, job_id, salary) values(?,?,?,?,?,?)', (emp_id, first_n, last_n, job, hire_d, amount))
+    conn.commit()
 
 # TASK 2: GET JOB AND HIRE_DATE INFORMATION
 def job_and_hire_date(cur, conn):
+    cur.execute('SELECT jobs.job_title, employees.hire_date from jobs join employees jobs.job_id = employee.job_id order by employees.hire_data imit 1')
+    x = cur.fetchone()
+    return x[0]
     pass
 
 # TASK 3: IDENTIFY PROBLEMATIC SALARY DATA
